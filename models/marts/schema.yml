@@ -1,0 +1,74 @@
+version: 2
+
+models:
+  - name: fct_trips
+    description: "Fact table with one row per taxi trip, including measures and foreign keys to dimensions."
+    columns:
+      - name: trip_key
+        description: "Surrogate key uniquely identifying each trip."
+        tests:
+          - unique
+          - not_null
+      - name: vendor_id
+        description: "Foreign key to dim_vendor."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_vendor')
+              field: vendor_id
+      - name: payment_type
+        description: "Foreign key to dim_payment_type."
+        tests:
+          - relationships:
+              to: ref('dim_payment_type')
+              field: payment_type
+      - name: ratecode_id
+        description: "Foreign key to dim_ratecode."
+        tests:
+          - relationships:
+              to: ref('dim_ratecode')
+              field: ratecode_id
+      - name: passenger_count
+        description: "Number of passengers; must be positive."
+        tests:
+          - not_null
+      - name: total_amount
+        description: "Total charged to the rider."
+        tests:
+          - not_null
+
+  - name: dim_vendor
+    description: "Vendor dimension: taxi technology providers."
+    columns:
+      - name: vendor_id
+        description: "Primary key."
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_ratecode
+    description: "Rate code dimension."
+    columns:
+      - name: ratecode_id
+        description: "Primary key."
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_payment_type
+    description: "Payment type dimension."
+    columns:
+      - name: payment_type
+        description: "Primary key."
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_date
+    description: "Date dimension derived from trip pickup dates."
+    columns:
+      - name: date_day
+        description: "Primary key: calendar day."
+        tests:
+          - unique
+          - not_null
